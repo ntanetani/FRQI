@@ -24,6 +24,18 @@ q = QuantumRegister(3)
 c = ClassicalRegister(3)
 qc = QuantumCircuit(q,c)
 
+
+def rry(circ, angle, t, c0, c1):
+    circ.h(t)
+    circ.rz(circ, angle/2, t)
+    circ.cx(c0, t)
+    circ.rz(circ, -angle/2, t)
+    circ.cx(c1, t)
+    circ.rz(circ, angle/2, t)
+    circ.cx(c0, t)
+    circ.rz(circ, -angle/2, t)
+    circ.h(t)
+
 def margolus(circ, t, c0, c1):
     circ.ry(np.pi/4,t)
     circ.cx(c0, t)
