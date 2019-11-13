@@ -25,7 +25,7 @@ def rry(circ, con1, con2, angle, t, c0, c1):
 
     circ.h(t)
 
-    circ.rz(circ, angle/2, t)
+    circ.rz(angle/2, t)
 
     if(con1 == 1):
         circ.x(c0)
@@ -35,7 +35,7 @@ def rry(circ, con1, con2, angle, t, c0, c1):
     if(con1 == 1):
         circ.x(c0)
 
-    circ.rz(circ, -angle/2, t)
+    circ.rz(-angle/2, t)
 
     if(con2 == 1):
         circ.x(c1)
@@ -45,7 +45,7 @@ def rry(circ, con1, con2, angle, t, c0, c1):
     if(con2 == 1):
         circ.x(c1)
 
-    circ.rz(circ, angle/2, t)
+    circ.rz(angle/2, t)
 
     if(con1 == 1):
         circ.x(c0)
@@ -55,7 +55,7 @@ def rry(circ, con1, con2, angle, t, c0, c1):
     if(con1 == 1):
         circ.x(c0)
 
-    circ.rz(circ, -angle/2, t)
+    circ.rz(-angle/2, t)
 
     circ.h(t)
 
