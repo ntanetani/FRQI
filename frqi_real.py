@@ -16,83 +16,56 @@ print("IBMQ backends:",backends)
 # backends = Aer.backends()
 # print("Aer backends:",backends)
 
-q = QuantumRegister(2)
-c = ClassicalRegister(2)
-qc = QuantumCircuit(q,c)
-
 q = QuantumRegister(3)
 c = ClassicalRegister(3)
 qc = QuantumCircuit(q,c)
 
 
-def rry(circ, angle, t, c0, c1):
-    circ.h(t)
-    circ.rz(circ, angle/2, t)
-    circ.cx(c0, t)
-    circ.rz(circ, -angle/2, t)
-    circ.cx(c1, t)
-    circ.rz(circ, angle/2, t)
-    circ.cx(c0, t)
-    circ.rz(circ, -angle/2, t)
+def rry(circ, con1, con2, angle, t, c0, c1):
+
     circ.h(t)
 
-def margolus(circ, t, c0, c1):
-    circ.ry(np.pi/4,t)
-    circ.cx(c0, t)
-    circ.ry(np.pi/4,t)
-    circ.cx(c1, t)
-    circ.ry(-np.pi/4,t)
-    circ.cx(c0, t)
-    circ.ry(-np.pi/4,t)
+    circ.rz(circ, angle/2, t)
 
-def mary00(circ, angle, t, c0, c1):
-    circ.ry(angle/2,t)
-    circ.cx(c1, t)
-    circ.ry(angle/2,t)
-    circ.cx(c0, t)
-    circ.ry(-angle/2,t)
-    circ.cx(c1, t)
-    circ.ry(-angle/2,t)
-    circ.cx(c0, t)
-    circ.x(c0)
+    if(con1 == 1):
+        circ.x(c0)
 
-def mary01(circ, angle, t, c0, c1):
-    circ.ry(angle/2,t)
     circ.cx(c0, t)
-    circ.ry(-angle/2,t)
-    circ.cx(c1, t)
-    circ.ry(-angle/2,t)
-    circ.cx(c0, t)
-    circ.ry(angle/2,t)
+
+    if(con1 == 1):
+        circ.x(c0)
+
+    circ.rz(circ, -angle/2, t)
+
+    if(con2 == 1):
+        circ.x(c1)
+
     circ.cx(c1, t)
 
-def mary10(circ, angle, t, c0, c1):
-    circ.ry(angle/2,t)
-    circ.cx(c0, t)
-    circ.ry(angle/2,t)
-    circ.cx(c1, t)
-    circ.ry(-angle/2,t)
-    circ.cx(c0, t)
-    circ.ry(-angle/2,t)
-    circ.cx(c1, t)
+    if(con2 == 1):
+        circ.x(c1)
 
-def mary11(circ, angle, t, c0, c1):
-    circ.ry(angle/2,t)
+    circ.rz(circ, angle/2, t)
+
+    if(con1 == 1):
+        circ.x(c0)
+
     circ.cx(c0, t)
-    circ.ry(-angle/2,t)
-    circ.cx(c1, t)
-    circ.ry(angle/2,t)
-    circ.cx(c0, t)
-    circ.ry(-angle/2,t)
-    circ.cx(c1, t)
+
+    if(con1 == 1):
+        circ.x(c0)
+
+    circ.rz(circ, -angle/2, t)
+
+    circ.h(t)
 
 for i in range(1,len(q)):
     qc.h(q[i])
 
-mary00(qc, np.pi/2, q[0], q[1], q[2])
-mary01(qc, np.pi/3, q[0], q[1], q[2])
-mary10(qc, np.pi/4, q[0], q[1], q[2])
-mary11(qc, np.pi/8, q[0], q[1], q[2])
+rry(qc, 0, 0, np.pi/2, q[0], q[1], q[2])
+rry(qc, 0, 1, np.pi/4, q[0], q[1], q[2])
+rry(qc, 1, 0, np.pi/6, q[0], q[1], q[2])
+rry(qc, 1, 1, np.pi/8, q[0], q[1], q[2])
 
 for i in range(len(q)):
     qc.measure(q[i],c[i])
@@ -107,6 +80,6 @@ backend_sim = IBMQ.get_backend('ibmq_singapore')
 
 result = execute(qc, backend_sim, shots=4096).result()
 #circuit_drawer(qc).show()
-#plot_histogram(result.get_counts(qc))
+plot_histogram(result.get_counts(qc))
 
 print(result.get_counts(qc))
