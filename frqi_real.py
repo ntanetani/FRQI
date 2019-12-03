@@ -5,7 +5,8 @@ from qiskit.tools.visualization import plot_histogram, circuit_drawer
 import numpy as np
 
 IBMQ.load_account()
-provider = IBMQ.get_provider(hub='ibm-q-keio', group='keio-internal', project='keio-students')
+#provider = IBMQ.get_provider(hub='ibm-q-keio', group='keio-internal', project='keio-students')
+provider = IBMQ.get_provider(hub='ibm-q', group='open', project='main')
 
 q = QuantumRegister(3)
 c = ClassicalRegister(3)
@@ -64,7 +65,7 @@ for i in range(len(q)):
 # backends = ['ibmq_20_tokyo', 'ibmq_qasm_simulator']
 
 # Use this for the real machine
-backend_sim = provider.get_backend('ibmq_singapore')
+backend_sim = provider.get_backend('ibmq_london')
 
 result = execute(qc, backend_sim, shots=4096).result()
 #circuit_drawer(qc).show()
