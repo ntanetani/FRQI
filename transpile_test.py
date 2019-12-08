@@ -5,12 +5,6 @@ from qiskit.tools.visualization import plot_histogram, circuit_drawer
 from qiskit import execute, Aer, BasicAer
 import numpy as np
 import random
-import keras
-from keras.models import Sequential
-from keras.layers import Dense, Activation
-from keras.datasets import mnist
-import matplotlib.pyplot as plt
-from sklearn.metrics import mean_squared_error, mean_absolute_error, mutual_info_score, r2_score
 
 def margolus(circ, t, c0, c1):
         circ.ry(np.pi/4,t)
@@ -193,25 +187,6 @@ def c10mary(circ, angle, bin, target, anc, controls):
 
 
 if __name__ == '__main__':
-        (x_train, y_train), (x_test, y_test) = mnist.load_data()
-        img_num = 0
-
-        #show original image
-        plt.imshow(x_train[img_num], cmap='gray')
-        #plt.savefig('mnistimg'+str(img_num)+'.png')
-        #plt.show()
-
-        # 2-dimentional data convert to 1-dimentional array
-        x_train = x_train.reshape(60000, 784)
-        # change type
-        x_train = x_train.astype('float64')
-        # Normalization(0~pi/2)
-        x_train /= 255.0
-        x_train = np.arcsin(x_train)
-
-        backends = Aer.backends()
-        #print("Aer backends:",backends)
-
         qubit = 12
         qc = QuantumCircuit(qubit,qubit)
 
@@ -219,13 +194,8 @@ if __name__ == '__main__':
         # apply hadamard gates
         qc.h(range(2,qubit))
 
-        # apply c10Ry gates (representing color data)
-        for i in range(len(x_train[img_num])):
-                '''
-                if x_train[img_num][i] != 0:
-                        c10mary(qc, 2 * x_train[img_num][i], format(i, '010b'), 0, 1, [i for i in range(2,12)])
-                '''
-                c10ry(qc, 2 * x_train[img_num][i], format(i, '010b'), 0, 1, [i for i in range(2,12)])
+        for i in range(28*28):
+            c10ry(qc, np.pi * (i / 784), format(i, '010b'), 0, 1, [i for i in range(2,12)])
         
         transpiled_circ = transpile(qc, basis_gates=['cx', 'u3'], optimization_level=0)
         print(transpiled_circ.depth())
@@ -233,41 +203,3 @@ if __name__ == '__main__':
         transpiled_circ2 = transpile(qc, basis_gates=['cx', 'u3'], optimization_level=3)
         print(transpiled_circ2.depth())
         print(transpiled_circ2.count_ops())
-
-        '''
-        qc.measure(range(qubit),range(qubit))
-
-        backend_sim = Aer.get_backend('qasm_simulator')
-        #print(qc.depth())
-        numOfShots = 10240
-        result = execute(qc, backend_sim, shots=numOfShots).result()
-        #circuit_drawer(qc).show()a
-        #plot_histogram(result.get_counts(qc))
-
-        print(result.get_counts(qc))
-
-        # generated image
-        genimg = np.array([])
-
-        #### decode
-        for i in range(len(x_train[img_num])):
-                try:
-                        genimg = np.append(genimg,[np.sqrt(result.get_counts(qc)[format(i, '010b')+'01']/numOfShots)])
-                except KeyError:
-                        genimg = np.append(genimg,[0.0])
-
-        # inverse nomalization
-        genimg *= 32.0 * 255.0
-        x_train = np.sin(x_train)
-        x_train *= 255.0
-
-        # convert type
-        genimg = genimg.astype('int')
-
-        # back to 2-dimentional data
-        genimg = genimg.reshape((28,28))
-
-        plt.imshow(genimg, cmap='gray', vmin=0, vmax=255)
-        plt.savefig('gen_'+str(img_num)+'.png')
-        plt.show()
-        '''
