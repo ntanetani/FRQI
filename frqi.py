@@ -121,6 +121,8 @@ def c10ry(circ, angle, bin, target, anc, controls):
         for i in bin:
                 clist.append(int(i))
 
+        clist = list(reversed(clist))
+
         for i in range(len(clist)):
                 if clist[i] == 0:
                         circ.x(controls[-i-1])
@@ -221,11 +223,11 @@ if __name__ == '__main__':
 
         # apply c10Ry gates (representing color data)
         for i in range(len(x_train[img_num])):
-                '''
                 if x_train[img_num][i] != 0:
-                        c10mary(qc, 2 * x_train[img_num][i], format(i, '010b'), 0, 1, [i for i in range(2,12)])
+                        c10ry(qc, 2 * x_train[img_num][i], format(i, '010b'), 0, 1, [i for i in range(2,12)])
                 '''
                 c10ry(qc, 2 * x_train[img_num][i], format(i, '010b'), 0, 1, [i for i in range(2,12)])
+                '''
         
         transpiled_circ = transpile(qc, basis_gates=['cx', 'u3'], optimization_level=0)
         print(transpiled_circ.depth())

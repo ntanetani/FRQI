@@ -108,12 +108,204 @@ def mary_8(circ, angle, t, c0, c1, c2, c3, c4, c5, c6):
         circ.tdg(t)
         circ.h(t)
 
+def mary_11(circ, angle, bin, t, cs):
+
+        clist = []
+
+        for i in bin:
+                clist.append(int(i))
+
+        clist = list(reversed(clist))
+
+        for i in range(len(clist)):
+                if clist[i] == 0:
+                        circ.x(cs[-i-1])
+
+        circ.h(t)
+        circ.t(t)
+
+        circ.h(t)
+        circ.t(t)
+        circ.cx(cs[0], t)
+        circ.tdg(t)
+        circ.h(t)
+        circ.cx(cs[1], t)
+        circ.t(t)
+        circ.cx(cs[2], t)
+        circ.tdg(t)
+        circ.cx(cs[1], t)
+        circ.t(t)
+        circ.cx(cs[2], t)
+        circ.tdg(t)
+        circ.h(t)
+        circ.t(t)
+        circ.cx(cs[0], t)
+        circ.tdg(t)
+        circ.h(t)
+
+        circ.tdg(t)
+        circ.h(t)
+
+        circ.h(t)
+        circ.t(t)
+        circ.cx(cs[3], t)
+        circ.tdg(t)
+        circ.h(t)
+        circ.cx(cs[4], t)
+        circ.t(t)
+        circ.cx(cs[5], t)
+        circ.tdg(t)
+        circ.cx(cs[4], t)
+        circ.t(t)
+        circ.cx(cs[5], t)
+        circ.tdg(t)
+        circ.h(t)
+        circ.t(t)
+        circ.cx(cs[3], t)
+        circ.tdg(t)
+        circ.h(t)
+
+        circ.rz(angle/4,t)
+
+        circ.h(t)
+        circ.t(t)
+        circ.cx(cs[6], t)
+        circ.tdg(t)
+        circ.h(t)
+        circ.cx(cs[7], t)
+        circ.t(t)
+
+        circ.h(t)
+        circ.t(t)
+        circ.cx(cs[8], t)
+        circ.tdg(t)
+        circ.cx(cs[9], t)
+        circ.t(t)
+        circ.cx(cs[8], t)
+        circ.tdg(t)
+        circ.h(t)
+
+        circ.tdg(t)
+        circ.cx(cs[7], t)
+        circ.t(t)
+
+        circ.h(t)
+        circ.t(t)
+        circ.cx(cs[8], t)
+        circ.tdg(t)
+        circ.cx(cs[9], t)
+        circ.t(t)
+        circ.cx(cs[8], t)
+        circ.tdg(t)
+        circ.h(t)
+
+        circ.tdg(t)
+        circ.h(t)
+        circ.t(t)
+        circ.cx(cs[6], t)
+        circ.tdg(t)
+        circ.h(t)
+
+        circ.rz(-angle/4,t)
+
+        circ.h(t)
+        circ.t(t)
+        circ.cx(cs[3], t)
+        circ.tdg(t)
+        circ.h(t)
+        circ.cx(cs[4], t)
+        circ.t(t)
+        circ.cx(cs[5], t)
+        circ.tdg(t)
+        circ.cx(cs[4], t)
+        circ.t(t)
+        circ.cx(cs[5], t)
+        circ.tdg(t)
+        circ.h(t)
+        circ.t(t)
+        circ.cx(cs[3], t)
+        circ.tdg(t)
+        circ.h(t)
+
+        circ.rz(angle/4,t)
+
+        circ.h(t)
+        circ.t(t)
+        circ.cx(cs[6], t)
+        circ.tdg(t)
+        circ.h(t)
+        circ.cx(cs[7], t)
+        circ.t(t)
+
+        circ.h(t)
+        circ.t(t)
+        circ.cx(cs[8], t)
+        circ.tdg(t)
+        circ.cx(cs[9], t)
+        circ.t(t)
+        circ.cx(cs[8], t)
+        circ.tdg(t)
+        circ.h(t)
+
+        circ.tdg(t)
+        circ.cx(cs[7], t)
+        circ.t(t)
+
+        circ.h(t)
+        circ.t(t)
+        circ.cx(cs[8], t)
+        circ.tdg(t)
+        circ.cx(cs[9], t)
+        circ.t(t)
+        circ.cx(cs[8], t)
+        circ.tdg(t)
+        circ.h(t)
+
+        circ.tdg(t)
+        circ.h(t)
+        circ.t(t)
+        circ.cx(cs[6], t)
+        circ.tdg(t)
+        circ.h(t)
+
+        circ.rz(-angle/4,t)
+        circ.h(t)
+        circ.t(t)
+
+        circ.h(t)
+        circ.t(t)
+        circ.cx(cs[0], t)
+        circ.tdg(t)
+        circ.h(t)
+        circ.cx(cs[1], t)
+        circ.t(t)
+        circ.cx(cs[2], t)
+        circ.tdg(t)
+        circ.cx(cs[1], t)
+        circ.t(t)
+        circ.cx(cs[2], t)
+        circ.tdg(t)
+        circ.h(t)
+        circ.t(t)
+        circ.cx(cs[0], t)
+        circ.tdg(t)
+        circ.h(t)
+
+        circ.tdg(t)
+        circ.h(t)
+
+        for i in range(len(clist)):
+                if clist[i] == 0:
+                        circ.x(cs[-i-1])
+
 def c10ry(circ, angle, bin, target, anc, controls):
 
         clist = []
 
         for i in bin:
                 clist.append(int(i))
+
+        clist = list(reversed(clist))
 
         for i in range(len(clist)):
                 if clist[i] == 0:
@@ -187,19 +379,21 @@ def c10mary(circ, angle, bin, target, anc, controls):
 
 
 if __name__ == '__main__':
-        qubit = 12
+        qubit = 11
         qc = QuantumCircuit(qubit,qubit)
 
 
         # apply hadamard gates
-        qc.h(range(2,qubit))
+        qc.h(range(1,qubit))
+        #qc.h(range(2,qubit))
 
         for i in range(28*28):
-            c10ry(qc, np.pi * (i / 784), format(i, '010b'), 0, 1, [i for i in range(2,12)])
+            #c10ry(qc, np.pi * (i / 784), format(i, '010b'), 0, 1, [i for i in range(2,12)])
+            mary_11(qc, np.pi * (i / 784), format(i, '010b'), 0, [i for i in range(1,11)])
         
         transpiled_circ = transpile(qc, basis_gates=['cx', 'u3'], optimization_level=0)
-        print(transpiled_circ.depth())
+        print('depth:' + transpiled_circ.depth())
         print(transpiled_circ.count_ops())
         transpiled_circ2 = transpile(qc, basis_gates=['cx', 'u3'], optimization_level=3)
-        print(transpiled_circ2.depth())
+        print('transpiled_depth:' + transpiled_circ2.depth())
         print(transpiled_circ2.count_ops())
