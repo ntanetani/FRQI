@@ -214,20 +214,37 @@ if __name__ == '__main__':
         backends = Aer.backends()
         #print("Aer backends:",backends)
 
-        qubit = 12
-        qc = QuantumCircuit(qubit,qubit)
+        q = QuantumRegister(11, "q")
+        anc = QuantumRegister(9, "anc")
+        c = ClassicalRegister(11, "c")
+        qc = QuantumCircuit(q, anc, c)
 
 
         # apply hadamard gates
-        qc.h(range(2,qubit))
+        qc.h(q[1:11])
 
         # apply c10Ry gates (representing color data)
         for i in range(len(x_train[img_num])):
+                clist = []
+
+                for j in format(i, '010b'):
+                        clist.append(int(j))
+
+                clist = list(reversed(clist))
+
+                for j in range(len(clist)):
+                        if clist[j] == 0:
+                                qc.x(q[-j-1])
+
                 if x_train[img_num][i] != 0:
-                        c10ry(qc, 2 * x_train[img_num][i], format(i, '010b'), 0, 1, [i for i in range(2,12)])
+                        #c10ry(qc, 2 * x_train[img_num][i], format(i, '010b'), q[0], anc[0], q[1:11])
+                        qc.mcry(2 * x_train[img_num][i], q[1:11], q[0], anc, use_basis_gates=True)
                 '''
-                c10ry(qc, 2 * x_train[img_num][i], format(i, '010b'), 0, 1, [i for i in range(2,12)])
+                c10ry(qc, 2 * x_train[img_num][i], format(i, '010b'), q[0], anc[0], q[1:11])
                 '''
+                for j in range(len(clist)):
+                        if clist[j] == 0:
+                                qc.x(q[-j-1])
         
         transpiled_circ = transpile(qc, basis_gates=['cx', 'u3'], optimization_level=0)
         print(transpiled_circ.depth())
