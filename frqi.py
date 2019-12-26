@@ -192,7 +192,35 @@ def c10mary(circ, angle, bin, target, anc, controls):
         for i in range(len(clist)):
                 if clist[i] == 0:
                         circ.x(controls[-i-1])
+def mct(circ, bin, target, controls, anc):
+        clist = []
 
+        for i in bin:
+                clist.append(int(i))
+
+        for i in range(len(clist)):
+            if clist[i] == 0:
+                circ.x(controls[-i-1])
+
+        if (clist%2) == 0:
+            thres = len(clist) - 4
+        else:
+            thres = len(clist) - 3
+        
+        for i in range(0, thres, 2):
+            if i == 0:
+              circ.ccx(controls[i], controls[i+1], anc[0])
+            else:
+              circ.ccx(controls[i], controls[i+1], controls[i-1])
+
+            circ.x(controls[i])
+            circ.x(controls[i+1])
+
+        mary_4(circ, target, anc[0], anc[1], controls[0], controls[1])
+
+        for i in range(len(clist)):
+                if clist[i] == 0:
+                        circ.x(controls[-i-1])
 
 if __name__ == '__main__':
         (x_train, y_train), (x_test, y_test) = mnist.load_data()
@@ -225,9 +253,6 @@ if __name__ == '__main__':
         for i in range(len(x_train[img_num])):
                 if x_train[img_num][i] != 0:
                         c10ry(qc, 2 * x_train[img_num][i], format(i, '010b'), 0, 1, [i for i in range(2,12)])
-                '''
-                c10ry(qc, 2 * x_train[img_num][i], format(i, '010b'), 0, 1, [i for i in range(2,12)])
-                '''
         
         transpiled_circ = transpile(qc, basis_gates=['cx', 'u3'], optimization_level=0)
         print(transpiled_circ.depth())
@@ -236,7 +261,6 @@ if __name__ == '__main__':
         print(transpiled_circ2.depth())
         print(transpiled_circ2.count_ops())
 
-        '''
         qc.measure(range(qubit),range(qubit))
 
         backend_sim = Aer.get_backend('qasm_simulator')
@@ -272,4 +296,3 @@ if __name__ == '__main__':
         plt.imshow(genimg, cmap='gray', vmin=0, vmax=255)
         plt.savefig('gen_'+str(img_num)+'.png')
         plt.show()
-        '''
