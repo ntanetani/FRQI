@@ -192,31 +192,55 @@ def c10mary(circ, angle, bin, target, anc, controls):
         for i in range(len(clist)):
                 if clist[i] == 0:
                         circ.x(controls[-i-1])
-def mct(circ, bin, target, controls, anc):
+def mcry(circ, angle, bin, target, controls, anc):
+
+        assert len(bin) == len(controls), "error"
+        assert len(bin) > 5, "ERROR"
+
         clist = []
 
         for i in bin:
                 clist.append(int(i))
 
         for i in range(len(clist)):
-            if clist[i] == 0:
-                circ.x(controls[-i-1])
-
-        if (clist%2) == 0:
-            thres = len(clist) - 4
-        else:
-            thres = len(clist) - 3
+                if clist[i] == 0:
+                        circ.x(controls[-i-1])
         
-        for i in range(0, thres, 2):
-            if i == 0:
-              circ.ccx(controls[i], controls[i+1], anc[0])
-            else:
-              circ.ccx(controls[i], controls[i+1], controls[i-1])
+        for i in range(0, len(clist)-4+len(clist)%2, 2):
+                if i == 0:
+                        circ.ccx(controls[i], controls[i+1], anc[0])
+                else:
+                        circ.ccx(controls[i], controls[i+1], controls[i-1])
 
-            circ.x(controls[i])
-            circ.x(controls[i+1])
+                circ.x(controls[i])
+                circ.x(controls[i+1])
+        
+        if (len(clist)%2) == 0:
+                circ.ccx(controls[-1], controls[-2], controls[-5])
+        else:
+                circ.cx(controls[-1], controls[-4])
+        
+        for i in range(6-len(clist)%2, len(clist)+1, 2):
+                circ.ccx(controls[-i+3], controls[-i+2], controls[-i])
 
-        mary_4(circ, target, anc[0], anc[1], controls[0], controls[1])
+        mary_4(circ, angle, target, anc[0], controls[0], controls[1])
+
+        for i in range(6-len(clist)%2, len(clist)+1, 2)[::-1]:
+                circ.ccx(controls[-i+3], controls[-i+2], controls[-i])
+
+        if (len(clist)%2) == 0:
+                circ.ccx(controls[-1], controls[-2], controls[-5])
+        else:
+                circ.cx(controls[-1], controls[-4])
+
+        for i in range(0, len(clist)-4+len(clist)%2, 2)[::-1]:
+                if i == 0:
+                        circ.ccx(controls[i], controls[i+1], anc[0])
+                else:
+                        circ.ccx(controls[i], controls[i+1], controls[i-1])
+
+                circ.x(controls[i])
+                circ.x(controls[i+1])
 
         for i in range(len(clist)):
                 if clist[i] == 0:
