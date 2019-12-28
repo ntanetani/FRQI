@@ -3,6 +3,7 @@ from qiskit import execute, transpile
 from qiskit.qasm import pi
 from qiskit.tools.visualization import plot_histogram, circuit_drawer
 from qiskit import execute, Aer, BasicAer
+from qiskit.aqua.circuits.gates.relative_phase_toffoli import rccx, rcccx
 import numpy as np
 import random
 import keras
@@ -11,46 +12,6 @@ from keras.layers import Dense, Activation
 from keras.datasets import mnist
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error, mean_absolute_error, mutual_info_score, r2_score
-
-def margolus(circ, t, c0, c1):
-        circ.ry(np.pi/4,t)
-        circ.cx(c0, t)
-        circ.ry(np.pi/4,t)
-        circ.cx(c1, t)
-        circ.ry(-np.pi/4,t)
-        circ.cx(c0, t)
-        circ.ry(-np.pi/4,t)
-
-def rccx(circ, t, c0, c1):
-        circ.h(t)
-        circ.t(t)
-        circ.cx(c0, t)
-        circ.tdg(t)
-        circ.cx(c1, t)
-        circ.t(t)
-        circ.cx(c0, t)
-        circ.tdg(t)
-        circ.h(t)
-
-def rcccx(circ, t, c0, c1, c2):
-        circ.h(t)
-        circ.t(t)
-        circ.cx(c0, t)
-        circ.tdg(t)
-        circ.h(t)
-        circ.cx(c1, t)
-        circ.t(t)
-        circ.cx(c2, t)
-        circ.tdg(t)
-        circ.cx(c1, t)
-        circ.t(t)
-        circ.cx(c2, t)
-        circ.tdg(t)
-        circ.h(t)
-        circ.t(t)
-        circ.cx(c0, t)
-        circ.tdg(t)
-        circ.h(t)
 
 def ccry(circ, angle, t, c0, c1):
         circ.cu3(angle/2, 0, 0, c1, t)
@@ -74,45 +35,45 @@ def cccry(circ, angle, t, a, c0, c1, c2):
         mary(circ, angle, t, a, c0)
         margolus(circ, a, c1, c2)
 
-def mary_4(circ, angle, t, c0, c1, c2):
-        circ.h(t)
-        circ.t(t)
-        circ.cx(c0,t)
-        circ.tdg(t)
-        circ.h(t)
-        circ.cx(c1,t)
-        circ.rz(angle/4,t)
-        circ.cx(c2,t)
-        circ.rz(-angle/4,t)
-        circ.cx(c1,t)
-        circ.rz(angle/4,t)
-        circ.cx(c2,t)
-        circ.rz(-angle/4,t)
-        circ.h(t)
-        circ.t(t)
-        circ.cx(c0,t)
-        circ.tdg(t)
-        circ.h(t)
+def mary_4(self, angle, t, c0, c1, c2):
+        self.h(t)
+        self.t(t)
+        self.cx(c0,t)
+        self.tdg(t)
+        self.h(t)
+        self.cx(c1,t)
+        self.rz(angle/4,t)
+        self.cx(c2,t)
+        self.rz(-angle/4,t)
+        self.cx(c1,t)
+        self.rz(angle/4,t)
+        self.cx(c2,t)
+        self.rz(-angle/4,t)
+        self.h(t)
+        self.t(t)
+        self.cx(c0,t)
+        self.tdg(t)
+        self.h(t)
 
-def mary_8(circ, angle, t, c0, c1, c2, c3, c4, c5, c6):
-        circ.h(t)
-        circ.t(t)
-        rccx(circ, t, c0, c1)
-        circ.tdg(t)
-        circ.h(t)
-        rccx(circ, t, c2, c3)
-        circ.rz(angle/4,t)
-        rcccx(circ, t, c4, c5, c6)
-        circ.rz(-angle/4,t)
-        rccx(circ, t, c2, c3)
-        circ.rz(angle/4,t)
-        rcccx(circ, t, c4, c5, c6)
-        circ.rz(-angle/4,t)
-        circ.h(t)
-        circ.t(t)
-        rccx(circ, t, c0, c1)
-        circ.tdg(t)
-        circ.h(t)
+def mary_8(self, angle, t, c0, c1, c2, c3, c4, c5, c6):
+        self.h(t)
+        self.t(t)
+        self.rccx(t, c0, c1)
+        self.tdg(t)
+        self.h(t)
+        self.rccx(t, c2, c3)
+        self.rz(angle/4,t)
+        self.rcccx(t, c4, c5, c6)
+        self.rz(-angle/4,t)
+        self.rccx(t, c2, c3)
+        self.rz(angle/4,t)
+        self.rcccx(t, c4, c5, c6)
+        self.rz(-angle/4,t)
+        self.h(t)
+        self.t(t)
+        self.rccx(t, c0, c1)
+        self.tdg(t)
+        self.h(t)
 
 def c10ry(circ, angle, bin, target, anc, controls):
 
@@ -234,17 +195,76 @@ def mcry(circ, angle, bin, target, controls, anc):
                 circ.cx(controls[-1], controls[-4])
 
         for i in range(0, len(clist)-4+len(clist)%2, 2)[::-1]:
+
+                circ.x(controls[i])
+                circ.x(controls[i+1])
+
                 if i == 0:
                         circ.ccx(controls[i], controls[i+1], anc[0])
                 else:
                         circ.ccx(controls[i], controls[i+1], controls[i-1])
 
-                circ.x(controls[i])
-                circ.x(controls[i+1])
-
         for i in range(len(clist)):
                 if clist[i] == 0:
                         circ.x(controls[-i-1])
+
+def rmcry(self, angle, bin, target, controls, anc):
+
+        assert len(bin) == len(controls), "error"
+        assert len(bin) > 5, "ERROR"
+
+        clist = []
+
+        for i in bin:
+                clist.append(int(i))
+
+        for i in range(len(clist)):
+                if clist[i] == 0:
+                        self.x(controls[-i-1])
+        
+        for i in range(0, len(clist)-4+len(clist)%2, 2):
+                if i == 0:
+                        self.ccx(controls[i], controls[i+1], anc[0])
+                else:
+                        self.ccx(controls[i], controls[i+1], controls[i-1])
+
+                self.x(controls[i])
+                self.x(controls[i+1])
+        
+        if (len(clist)%2) == 0:
+                self.rccx(controls[-1], controls[-2], controls[-5])
+        else:
+                self.cx(controls[-1], controls[-4])
+        
+        for i in range(6-len(clist)%2, len(clist)+1, 2):
+                self.rccx(controls[-i+3], controls[-i+2], controls[-i])
+
+        self.mary_4(angle, target, anc[0], controls[0], controls[1])
+
+        for i in reversed(range(6-len(clist)%2, len(clist)+1, 2)):
+                self.rccx(controls[-i+3], controls[-i+2], controls[-i])
+
+        if (len(clist)%2) == 0:
+                self.rccx(controls[-1], controls[-2], controls[-5])
+        else:
+                self.cx(controls[-1], controls[-4])
+
+        for i in reversed(range(0, len(clist)-4+len(clist)%2, 2)):
+                
+                self.x(controls[i])
+                self.x(controls[i+1])
+
+                if i == 0:
+                        self.rccx(controls[i], controls[i+1], anc[0])
+                else:
+                        self.rccx(controls[i], controls[i+1], controls[i-1])
+
+        for i in range(len(clist)):
+                if clist[i] == 0:
+                        self.x(controls[-i-1])
+
+QuantumCircuit.mary_4 = mary_4
+QuantumCircuit.rmcry = rmcry
 
 if __name__ == '__main__':
         (x_train, y_train), (x_test, y_test) = mnist.load_data()
@@ -267,7 +287,9 @@ if __name__ == '__main__':
         #print("Aer backends:",backends)
 
         qubit = 12
-        qc = QuantumCircuit(qubit,qubit)
+        q = QuantumRegister(qubit, "q")
+        c = ClassicalRegister(qubit, "c")
+        qc = QuantumCircuit(q,c)
 
 
         # apply hadamard gates
@@ -276,20 +298,14 @@ if __name__ == '__main__':
         # apply c10Ry gates (representing color data)
         for i in range(len(x_train[img_num])):
                 if x_train[img_num][i] != 0:
-                        c10ry(qc, 2 * x_train[img_num][i], format(i, '010b'), 0, 1, [i for i in range(2,12)])
-        
-        transpiled_circ = transpile(qc, basis_gates=['cx', 'u3'], optimization_level=0)
-        print(transpiled_circ.depth())
-        print(transpiled_circ.count_ops())
-        transpiled_circ2 = transpile(qc, basis_gates=['cx', 'u3'], optimization_level=3)
-        print(transpiled_circ2.depth())
-        print(transpiled_circ2.count_ops())
+                        #c10ry(qc, 2 * x_train[img_num][i], format(i, '010b'), 0, 1, [i for i in range(2,12)])
+                        qc.rmcry(2 * x_train[img_num][i], format(i, '010b'), q[0], q[2:12], [q[1]])
 
-        qc.measure(range(qubit),range(qubit))
+        qc.measure(q[0:qubit],c[0:qubit])
 
         backend_sim = Aer.get_backend('qasm_simulator')
         #print(qc.depth())
-        numOfShots = 10240
+        numOfShots = 1024000
         result = execute(qc, backend_sim, shots=numOfShots).result()
         #circuit_drawer(qc).show()a
         #plot_histogram(result.get_counts(qc))
