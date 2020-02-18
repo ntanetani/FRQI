@@ -1,10 +1,9 @@
-from qiskit import IBMQ, QuantumCircuit, ClassicalRegister, QuantumRegister
-from qiskit import execute, transpile
+from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister
+from qiskit import transpile
 from qiskit.qasm import pi
-from qiskit.tools.visualization import plot_histogram, circuit_drawer
 from qiskit import execute, Aer, BasicAer
 import numpy as np
-import random
+import Gates
 
 def margolus(circ, t, c0, c1):
         circ.ry(np.pi/4,t)
@@ -379,21 +378,24 @@ def c10mary(circ, angle, bin, target, anc, controls):
 
 
 if __name__ == '__main__':
-        qubit = 11
-        qc = QuantumCircuit(qubit,qubit)
-
-
+        qubit = 23
+        target = QuantumRegister(1, "target")
+        controls = QuantumRegister(21, "controls")
+        anc = QuantumRegister(2, "anc")
+        c = ClassicalRegister(23)
+        qc = QuantumCircuit(target, controls, anc, c)
         # apply hadamard gates
-        qc.h(range(1,qubit))
+        qc.h(controls)
         #qc.h(range(2,qubit))
 
-        for i in range(28*28):
+        for i in range(1600*1124):
             #c10ry(qc, np.pi * (i / 784), format(i, '010b'), 0, 1, [i for i in range(2,12)])
-            mary_11(qc, np.pi * (i / 784), format(i, '010b'), 0, [i for i in range(1,11)])
+            #mary_11(qc, np.pi * (i / 1600*1124), format(i, '010b'), 0, [i for i in range(1,11)])
+            qc.rmcry(np.pi * (i / 1600*1124), format(i, '021b'), controls, target, anc)
         
         transpiled_circ = transpile(qc, basis_gates=['cx', 'u3'], optimization_level=0)
         print('depth:' + transpiled_circ.depth())
         print(transpiled_circ.count_ops())
-        transpiled_circ2 = transpile(qc, basis_gates=['cx', 'u3'], optimization_level=3)
+        transpiled_circ2 = transpile(qc, basis_gates=['cx', 'u3'], optimization_level=1)
         print('transpiled_depth:' + transpiled_circ2.depth())
         print(transpiled_circ2.count_ops())
